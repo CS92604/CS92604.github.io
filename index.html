@@ -8,6 +8,26 @@
   <title>Toyota / Lexus Factory ECU Workflow Project</title>
   <meta name="description" content="Documentation project for Toyota and Lexus 2JZ-GE VVT-i factory ECU reading, editing, flashing, and safe calibration workflow." />
 
+  <script>
+    /*
+      Hidden company view router.
+
+      Public page:
+      https://yourusername.github.io/yourrepo/
+
+      Company view:
+      https://yourusername.github.io/yourrepo/?company=1
+
+      This is not password security. It only hides the company section from normal navigation.
+    */
+
+    const EARLY_PARAMS = new URLSearchParams(window.location.search);
+
+    if (EARLY_PARAMS.get("company") === "1") {
+      document.documentElement.classList.add("company-mode");
+    }
+  </script>
+
   <style>
     :root {
       --bg: #070b12;
@@ -145,8 +165,34 @@
       font-weight: 800;
     }
 
+    .company-view,
+    .company-nav,
+    .company-footer {
+      display: none;
+    }
+
+    html.company-mode .public-view,
+    html.company-mode .public-nav,
+    html.company-mode .public-footer {
+      display: none;
+    }
+
+    html.company-mode .company-view,
+    html.company-mode .company-nav,
+    html.company-mode .company-footer {
+      display: block;
+    }
+
+    html.company-mode .company-nav {
+      display: flex;
+    }
+
     .hero {
       padding: 88px 0 58px;
+    }
+
+    .hero.company-hero {
+      padding: 82px 0 42px;
     }
 
     .hero-grid {
@@ -199,6 +245,10 @@
       letter-spacing: -3px;
     }
 
+    .company-view h1 {
+      max-width: 920px;
+    }
+
     .gradient-text {
       background: linear-gradient(135deg, var(--text), var(--cyan) 45%, var(--green));
       -webkit-background-clip: text;
@@ -211,6 +261,10 @@
       font-size: 19px;
       max-width: 760px;
       margin: 0 0 28px;
+    }
+
+    .company-view .hero-subtitle {
+      max-width: 840px;
     }
 
     .button-row {
@@ -358,9 +412,17 @@
       padding: 45px 0;
     }
 
+    .company-view .section {
+      padding: 38px 0;
+    }
+
     .section-head {
       max-width: 790px;
       margin-bottom: 22px;
+    }
+
+    .company-view .section-head {
+      max-width: 840px;
     }
 
     .section-kicker {
@@ -507,12 +569,15 @@
       margin: 0 0 18px;
     }
 
-    .update-list {
+    .update-list,
+    .answer-block,
+    .timeline {
       display: grid;
       gap: 13px;
     }
 
-    .update {
+    .update,
+    .timeline-item {
       display: grid;
       grid-template-columns: 145px 1fr;
       gap: 14px;
@@ -522,7 +587,12 @@
       border: 1px solid var(--line);
     }
 
-    .update-date {
+    .timeline-item {
+      grid-template-columns: 160px 1fr;
+    }
+
+    .update-date,
+    .timeline-date {
       color: var(--green);
       font-weight: 900;
     }
@@ -552,6 +622,75 @@
       border-radius: 14px;
     }
 
+    .stat {
+      font-size: 38px;
+      line-height: 1;
+      font-weight: 900;
+      color: var(--green);
+      margin-bottom: 8px;
+      letter-spacing: -1.5px;
+    }
+
+    .counter-stat {
+      font-size: clamp(46px, 7vw, 76px);
+      line-height: 1;
+      font-weight: 950;
+      color: var(--green);
+      letter-spacing: -2.5px;
+      margin: 8px 0 10px;
+      text-shadow: 0 0 28px rgba(119, 247, 194, 0.22);
+    }
+
+    .placeholder {
+      color: var(--yellow);
+    }
+
+    .answer {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+    }
+
+    .answer h3 {
+      margin: 0 0 10px;
+      font-size: 20px;
+      letter-spacing: -0.4px;
+    }
+
+    .answer p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .answer ul {
+      margin: 10px 0 0;
+      color: var(--muted);
+      padding-left: 20px;
+    }
+
+    .answer li {
+      margin: 8px 0;
+    }
+
+    .proof-box {
+      margin-top: 12px;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px dashed rgba(114, 247, 255, 0.28);
+      background: rgba(114, 247, 255, 0.055);
+      color: var(--muted);
+    }
+
+    .note-box {
+      margin-top: 12px;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 209, 102, 0.24);
+      background: rgba(255, 209, 102, 0.075);
+      color: #ffe6ad;
+    }
+
     .footer {
       padding: 48px 0 66px;
       color: var(--muted2);
@@ -562,6 +701,7 @@
 
     .footer a {
       color: var(--muted);
+      margin: 0 8px;
     }
 
     @media (max-width: 900px) {
@@ -575,7 +715,8 @@
       .spec-row,
       .update,
       .statline,
-      .platform-list {
+      .platform-list,
+      .timeline-item {
         grid-template-columns: 1fr;
       }
 
@@ -589,7 +730,8 @@
         justify-content: flex-start;
       }
 
-      .hero {
+      .hero,
+      .hero.company-hero {
         padding: 52px 0 38px;
       }
 
@@ -603,7 +745,7 @@
 
 <body>
   <div class="topbar">
-    <div class="wrap nav">
+    <div class="wrap nav public-nav">
       <a class="logo" href="#top" aria-label="Factory ECU Project Home">
         <span class="logo-mark"></span>
         <span>Factory ECU Project</span>
@@ -626,376 +768,648 @@
     </a>
   </nav>
 </div>
+
+<div class="wrap nav company-nav">
+  <a class="logo" href="index.html" aria-label="Factory ECU Project Home">
+    <span class="logo-mark"></span>
+    <span>Factory ECU Project</span>
+  </a>
+
+  <nav class="nav-links" aria-label="Company navigation">
+    <a href="#company-audience">Audience</a>
+    <a href="#company-details">Details</a>
+    <a href="#company-timeline">Timing</a>
+    <a class="nav-cta" href="mailto:connorstephens42@gmail.com">Contact</a>
+  </nav>
+</div>
 ```
 
   </div>
 
   <main id="top">
-    <section class="hero">
-      <div class="wrap hero-grid">
-        <div>
-          <div class="eyebrow">
-            <span class="pulse"></span>
-            Factory ECU documentation project
-          </div>
+    <div class="public-view">
+      <section class="hero">
+        <div class="wrap hero-grid">
+          <div>
+            <div class="eyebrow">
+              <span class="pulse"></span>
+              Factory ECU documentation project
+            </div>
 
 ```
+        <h1>
+          Toyota / Lexus <span class="gradient-text">Factory ECU</span> Workflow
+        </h1>
+
+        <p class="hero-subtitle">
+          Public documentation for OBD2-equipped Toyota and Lexus 2JZ-GE VVT-i platforms:
+          identifying the ECU, confirming software access, reading/writing safely,
+          reviewing editable calibration areas, and building a clean stock-ECU workflow.
+        </p>
+
+        <div class="button-row">
+          <a
+            class="btn"
+            href="https://docs.google.com/forms/d/e/1FAIpQLSdKNSurKakjrKklh44PYjLNBVJx30kq4CQYncngKS10O-zPnw/viewform?usp=dialog"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Join the Newsletter
+          </a>
+
+          <a class="btn secondary" href="#workflow">View Documentation Plan</a>
+        </div>
+
+        <div class="tag-row" aria-label="Project tags">
+          <span class="tag">2JZ-GE VVT-i</span>
+          <span class="tag">OBD2-equipped cars</span>
+          <span class="tag">USDM focus</span>
+          <span class="tag">IS300 priority</span>
+          <span class="tag">Factory ECU</span>
+        </div>
+      </div>
+
+      <aside class="hero-card" aria-label="Project status card">
+        <div class="card-inner">
+          <h3 style="margin:0 0 8px;">Project Status</h3>
+          <p style="color:var(--muted);margin:0;">
+            The current goal is to secure software access, verify the workflow, and document
+            a repeatable factory ECU process for owners who want a legitimate path before
+            moving to standalone management.
+          </p>
+
+          <div class="terminal">
+            <div class="terminal-top">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </div>
+
+            <div class="terminal-body">
+              primary platform: <span>USDM Lexus IS300</span><br />
+              test vehicle: <span>2002 Lexus IS300 SportCross</span><br />
+              engine: <span>2JZ-GE VVT-i</span><br />
+              ecu: <span>89661-53360</span><br />
+              software lead: <span>89663-53360 / 89663-53360-A</span><br />
+              workflow: <span>software access + testing + documentation</span>
+            </div>
+          </div>
+
+          <div class="statline">
+            <div class="mini-stat">
+              <strong>4,426+</strong>
+              <small>project waitlist interest</small>
+            </div>
+
+            <div class="mini-stat">
+              <strong>OBD2</strong>
+              <small>required for this workflow</small>
+            </div>
+
+            <div class="mini-stat">
+              <strong>IS300</strong>
+              <small>primary test platform</small>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section" id="overview">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-kicker">Overview</div>
+        <h2>Why this exists</h2>
+        <p>
+          The Toyota and Lexus 2JZ-GE VVT-i community has a lot of scattered information around
+          factory ECU tuning. This project is meant to turn that into one clear, tested,
+          public workflow.
+        </p>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div class="number">1</div>
+          <h3>Identify the ECU</h3>
+          <p>
+            Document the ECU part number, Denso number, software ID, CAL IDs, connector requirements,
+            and supported file family so owners know exactly what they are working with.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="number">2</div>
+          <h3>Verify software access</h3>
+          <p>
+            Confirm what software can access the ECU, what the workflow can actually do,
+            and where reading, writing, editing, and file safety checks are handled.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="number">3</div>
+          <h3>Publish the workflow</h3>
+          <p>
+            Build a practical guide with screenshots, notes, limitations, safe calibration boundaries,
+            and clear requirements for anyone trying to follow the same path.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="subscribe">
+    <div class="wrap">
+      <div class="banner">
+        <h2>Follow the Factory ECU Documentation</h2>
+        <p>
+          Join the newsletter for updates as the workflow is tested, documented, and released.
+          Updates will focus on software access, ECU identification, read/write progress,
+          calibration review, compatibility notes, and safe workflow documentation.
+        </p>
+
+        <div class="button-row">
+          <a
+            class="btn"
+            href="https://docs.google.com/forms/d/e/1FAIpQLSdKNSurKakjrKklh44PYjLNBVJx30kq4CQYncngKS10O-zPnw/viewform?usp=dialog"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Subscribe for Updates
+          </a>
+
+          <a class="btn secondary" href="mailto:connorstephens42@gmail.com">Contact Connor</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="coverage">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-kicker">Platform Coverage</div>
+        <h2>Planned Toyota / Lexus coverage</h2>
+        <p>
+          This workflow is being developed around OBD2-equipped Toyota and Lexus platforms using
+          related factory ECU architecture. The primary focus is USDM cars, especially the Lexus IS300,
+          because that platform has the largest visible demand and the clearest test path.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>Potentially relevant platforms</h3>
+
+        <div class="platform-list">
+          <div class="platform-pill">Toyota Altezza AS 300 / Lexus IS 300</div>
+          <div class="platform-pill">Toyota Aristo / Lexus GS 300</div>
+          <div class="platform-pill">Toyota Crown / Crown Majesta</div>
+          <div class="platform-pill">Toyota Mark II / Chaser / Cresta</div>
+          <div class="platform-pill">Toyota Origin</div>
+          <div class="platform-pill">Toyota Progres</div>
+          <div class="platform-pill">Toyota Soarer / Lexus SC 300</div>
+          <div class="platform-pill">Toyota Supra</div>
+        </div>
+      </div>
+
+      <div class="disclaimer" style="margin-top:16px;">
+        This workflow only applies to vehicles equipped with an OBD2 port. JDM models have not
+        been tested yet. Current development is focused primarily on USDM vehicles, with the Lexus
+        IS300 platform as the main priority due to popularity and available test data.
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="workflow">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-kicker">Documentation Plan</div>
+        <h2>Planned workflow coverage</h2>
+        <p>
+          This page will become the public home for the verified method once testing is complete.
+        </p>
+      </div>
+
+      <div class="grid two">
+        <div class="card">
+          <h3>Core guide sections</h3>
+          <ul>
+            <li>Confirm ECU part number, software ID, and CAL IDs.</li>
+            <li>Confirm vehicle eligibility and OBD2 access requirements.</li>
+            <li>Confirm which software workflow can access the ECU.</li>
+            <li>Read or obtain the original stock file when possible.</li>
+            <li>Document safe file handling and write workflow requirements.</li>
+            <li>Review available calibration areas and practical limits.</li>
+            <li>Show what the factory ECU can and cannot realistically support.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Video / media coverage</h3>
+          <ul>
+            <li>ECU identification walkthrough.</li>
+            <li>Vehicle compatibility notes.</li>
+            <li>OBD2 access and setup overview.</li>
+            <li>Read/write workflow notes.</li>
+            <li>Factory file and calibration review.</li>
+            <li>Safe calibration workflow explanation.</li>
+            <li>Results, limitations, and next steps.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="disclaimer" style="margin-top:16px;">
+        This project is focused on legitimate calibration, safe ECU workflow documentation,
+        fuel/timing control, software identification, and proper tool usage. It is not intended
+        for emissions defeat, illegal use, or unsafe calibration practices.
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="vehicle">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-kicker">Primary Test Car</div>
+        <h2>Current ECU and platform details</h2>
+        <p>
+          These details are the baseline for the initial documentation and compatibility testing.
+        </p>
+      </div>
+
+      <div class="spec-table">
+        <div class="spec-row">
+          <div class="spec-cell">Primary vehicle</div>
+          <div class="spec-cell">2002 Lexus IS300 SportCross, USDM</div>
+        </div>
+
+        <div class="spec-row">
+          <div class="spec-cell">Engine</div>
+          <div class="spec-cell">2JZ-GE VVT-i</div>
+        </div>
+
+        <div class="spec-row">
+          <div class="spec-cell">Transmission</div>
+          <div class="spec-cell">A650E automatic transmission</div>
+        </div>
+
+        <div class="spec-row">
+          <div class="spec-cell">ECU Part Number</div>
+          <div class="spec-cell">89661-53360</div>
+        </div>
+
+        <div class="spec-row">
+          <div class="spec-cell">Denso Number</div>
+          <div class="spec-cell">275000-2271</div>
+        </div>
+
+        <div class="spec-row">
+          <div class="spec-cell">Software ID Lead</div>
+          <div class="spec-cell">89663-53360 / 89663-53360-A</div>
+        </div>
+
+        <div class="spec-row">
+          <div class="spec-cell">Current CAL IDs</div>
+          <div class="spec-cell">35308100 / 55307100</div>
+        </div>
+
+        <div class="spec-row">
+          <div class="spec-cell">Previous CAL IDs</div>
+          <div class="spec-cell">35308000 / 55307000</div>
+        </div>
+
+        <div class="spec-row">
+          <div class="spec-cell">Development focus</div>
+          <div class="spec-cell">USDM IS300 first, broader OBD2-equipped Toyota/Lexus applications later if verified.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="updates">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-kicker">Updates</div>
+        <h2>Project log</h2>
+        <p>
+          Progress updates will be added here as the workflow moves from research to testing
+          and public documentation.
+        </p>
+      </div>
+
+      <div class="update-list">
+        <div class="update">
+          <div class="update-date">Current</div>
+          <div>
+            Working with companies to get access to the software needed to test and document
+            the factory ECU workflow properly.
+          </div>
+        </div>
+
+        <div class="update">
+          <div class="update-date">Next</div>
+          <div>
+            Verify software access, ECU communication, original file workflow, and safe file
+            handling requirements on the primary USDM IS300 test platform.
+          </div>
+        </div>
+
+        <div class="update">
+          <div class="update-date">Later</div>
+          <div>
+            Publish the full guide, compatibility notes, screenshots, video walkthrough,
+            limitations, and results from testing.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="banner">
+        <h2>Want the updates?</h2>
+        <p>
+          Subscribe to follow the ECU workflow as it moves from software-access research
+          to tested public documentation.
+        </p>
+
+        <div class="button-row">
+          <a
+            class="btn"
+            href="https://docs.google.com/forms/d/e/1FAIpQLSdKNSurKakjrKklh44PYjLNBVJx30kq4CQYncngKS10O-zPnw/viewform?usp=dialog"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Join the Newsletter
+          </a>
+
+          <a class="btn secondary" href="#top">Back to Top</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="company-view">
+  <section class="hero company-hero">
+    <div class="wrap">
+      <div class="eyebrow">Company review page</div>
+
       <h1>
-        Toyota / Lexus <span class="gradient-text">Factory ECU</span> Workflow
+        Partnership Information for <span class="gradient-text">Factory ECU Workflow</span> Companies
       </h1>
 
       <p class="hero-subtitle">
-        Public documentation for OBD2-equipped Toyota and Lexus 2JZ-GE VVT-i platforms:
-        identifying the ECU, confirming software access, reading/writing safely,
-        reviewing editable calibration areas, and building a clean stock-ECU workflow.
+        This unlisted page summarizes the audience, planned documentation, publication plan,
+        and tracking options for companies interested in supporting the Toyota / Lexus factory
+        ECU workflow documentation project.
       </p>
 
       <div class="button-row">
-        <a
-          class="btn"
-          href="https://docs.google.com/forms/d/e/1FAIpQLSdKNSurKakjrKklh44PYjLNBVJx30kq4CQYncngKS10O-zPnw/viewform?usp=dialog"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Join the Newsletter
-        </a>
-
-        <a class="btn secondary" href="#workflow">View Documentation Plan</a>
-      </div>
-
-      <div class="tag-row" aria-label="Project tags">
-        <span class="tag">2JZ-GE VVT-i</span>
-        <span class="tag">OBD2-equipped cars</span>
-        <span class="tag">USDM focus</span>
-        <span class="tag">IS300 priority</span>
-        <span class="tag">Factory ECU</span>
+        <a class="btn" href="mailto:connorstephens42@gmail.com">Contact Connor</a>
+        <a class="btn secondary" href="index.html">View Public Project Page</a>
       </div>
     </div>
+  </section>
 
-    <aside class="hero-card" aria-label="Project status card">
-      <div class="card-inner">
-        <h3 style="margin:0 0 8px;">Project Status</h3>
-        <p style="color:var(--muted);margin:0;">
-          The current goal is to secure software access, verify the workflow, and document
-          a repeatable factory ECU process for owners who want a legitimate path before
-          moving to standalone management.
-        </p>
-
-        <div class="terminal">
-          <div class="terminal-top">
-            <span class="dot"></span>
-            <span class="dot"></span>
-            <span class="dot"></span>
-          </div>
-
-          <div class="terminal-body">
-            primary platform: <span>USDM Lexus IS300</span><br />
-            test vehicle: <span>2002 Lexus IS300 SportCross</span><br />
-            engine: <span>2JZ-GE VVT-i</span><br />
-            ecu: <span>89661-53360</span><br />
-            software lead: <span>89663-53360 / 89663-53360-A</span><br />
-            workflow: <span>software access + testing + documentation</span>
-          </div>
-        </div>
-
-        <div class="statline">
-          <div class="mini-stat">
-            <strong>4,426+</strong>
-            <small>project waitlist interest</small>
-          </div>
-
-          <div class="mini-stat">
-            <strong>OBD2</strong>
-            <small>required for this workflow</small>
-          </div>
-
-          <div class="mini-stat">
-            <strong>IS300</strong>
-            <small>primary test platform</small>
-          </div>
-        </div>
-      </div>
-    </aside>
-  </div>
-</section>
-
-<section class="section" id="overview">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="section-kicker">Overview</div>
-      <h2>Why this exists</h2>
-      <p>
-        The Toyota and Lexus 2JZ-GE VVT-i community has a lot of scattered information around
-        factory ECU tuning. This project is meant to turn that into one clear, tested,
-        public workflow.
-      </p>
-    </div>
-
-    <div class="grid">
-      <div class="card">
-        <div class="number">1</div>
-        <h3>Identify the ECU</h3>
+  <section class="section" id="company-audience">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-kicker">Audience Snapshot</div>
+        <h2>Current project audience</h2>
         <p>
-          Document the ECU part number, Denso number, software ID, CAL IDs, connector requirements,
-          and supported file family so owners know exactly what they are working with.
+          The audience is built around one specific topic: a verified Toyota / Lexus factory ECU workflow,
+          with the USDM Lexus IS300 as the main test platform.
         </p>
       </div>
 
-      <div class="card">
-        <div class="number">2</div>
-        <h3>Verify software access</h3>
+      <div class="grid">
+        <div class="card">
+          <h3>Public interest tracker</h3>
+          <div class="counter-stat">
+            <span id="waitlist-counter">4,426</span>+
+          </div>
+          <p>
+            Starting from the last listed project waitlist count. This display updates periodically to represent
+            continued project interest.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="stat placeholder">N/A</div>
+          <h3>Average open rate</h3>
+          <p>
+            Not available yet unless email campaigns are sent through a platform that tracks opens.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="stat placeholder">N/A</div>
+          <h3>Average click rate</h3>
+          <p>
+            Not available yet unless newsletter links are sent through a platform that tracks clicks.
+          </p>
+        </div>
+      </div>
+
+      <div class="note-box">
+        For formal company review, the actual proof of waitlist size should be a screenshot or exported report
+        from the email platform or Google Forms response dashboard. The animated counter is not a substitute for
+        platform verification.
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="company-details">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-kicker">Company Questions</div>
+        <h2>Requested information</h2>
         <p>
-          Confirm what software can access the ECU, what the workflow can actually do,
-          and where reading, writing, editing, and file safety checks are handled.
+          The following sections answer the main review questions for software access, test access,
+          discounts, referral partnerships, or documentation support.
         </p>
       </div>
 
-      <div class="card">
-        <div class="number">3</div>
-        <h3>Publish the workflow</h3>
+      <div class="answer-block">
+        <div class="answer">
+          <h3>Proof of current newsletter / waitlist size</h3>
+          <p>
+            The current listed project waitlist size starts at 4,426+ people interested in the factory ECU workflow.
+            For verification, I can provide a screenshot or export from the form/email platform showing the current
+            signup or response count.
+          </p>
+
+          <div class="proof-box">
+            Add proof link here after uploading a screenshot to the repository:
+            <a href="#">waitlist-proof-screenshot.png</a>
+          </div>
+        </div>
+
+        <div class="answer">
+          <h3>Average open rate and click-through rate</h3>
+          <p>
+            These metrics are not available yet unless updates are sent through an email platform that tracks
+            campaign opens and link clicks. Since the current subscriber collection is through a signup form,
+            the main available metric is the subscriber/response count. Once newsletter updates are sent through
+            a proper campaign platform, open rate and click-through rate can be reported from that dashboard.
+          </p>
+
+          <ul>
+            <li>Average open rate: <strong>Not available yet</strong></li>
+            <li>Average click-through rate: <strong>Not available yet</strong></li>
+            <li>Planned reporting source: newsletter campaign dashboard once campaign emails are sent.</li>
+          </ul>
+        </div>
+
+        <div class="answer">
+          <h3>How the waitlist was collected</h3>
+          <p>
+            The waitlist was collected from people interested in a verified factory ECU workflow for Toyota / Lexus
+            2JZ-GE VVT-i platforms. The audience specifically signed up for updates about ECU identification,
+            software access, read/write testing, calibration workflow, tool requirements, realistic cost,
+            limitations, and final documentation.
+          </p>
+
+          <p style="margin-top:12px;">
+            The strongest interest is around the USDM Lexus IS300 platform because many owners are in the same
+            situation: they want a legitimate stock ECU workflow before spending significantly more money on
+            standalone ECU hardware, wiring, sensors, and supporting parts.
+          </p>
+        </div>
+
+        <div class="answer">
+          <h3>Draft outline of the planned BitBox / BitEdit documentation and video content</h3>
+          <p>
+            The planned documentation will focus on a safe, legitimate factory ECU workflow rather than emissions
+            defeat or illegal use cases.
+          </p>
+
+          <ul>
+            <li>Project overview and why the IS300 / 2JZ-GE stock ECU workflow matters.</li>
+            <li>Supported vehicle and ECU identification notes.</li>
+            <li>How to confirm ECU part number, Denso number, software ID, and CAL IDs.</li>
+            <li>OBD2 access requirements and test setup.</li>
+            <li>BitBox module/FID confirmation and read/write workflow notes.</li>
+            <li>BitEdit file-opening and calibration review workflow.</li>
+            <li>Original file / stock calibration handling.</li>
+            <li>Checksum, file safety, and write-preparation notes.</li>
+            <li>Calibration area review: what maps are available and what is not available.</li>
+            <li>Safe workflow boundaries for fuel, timing, drivability, and factory ECU limitations.</li>
+            <li>Known risks, failed paths, and realistic use cases.</li>
+            <li>Final written guide with screenshots, compatibility notes, and video walkthrough.</li>
+          </ul>
+        </div>
+
+        <div class="answer">
+          <h3>Expected publication channels and timing</h3>
+          <p>
+            The primary publication channels will be this documentation website and the newsletter. The newsletter
+            is the most targeted channel because it reaches people who specifically signed up for this exact factory
+            ECU workflow.
+          </p>
+
+          <ul>
+            <li>Primary channel: this public documentation website.</li>
+            <li>Primary audience channel: dedicated newsletter/waitlist.</li>
+            <li>Additional publicity: behind-the-scenes coordination with popular IS300 NA-T stock ECU owner YouTubers.</li>
+            <li>Timing: staged release after software access, ECU communication, original-file handling, and safe workflow testing are verified.</li>
+          </ul>
+        </div>
+
+        <div class="answer">
+          <h3>Referral link, discount code, or result tracking</h3>
+          <p>
+            Yes. I am open to using a referral link, tracked URL, UTM-tagged link, or discount code so actual
+            results can be measured. I am not trying to profit from this project. The goal is to help people
+            who are in the same situation and need a clear, legitimate factory ECU workflow.
+          </p>
+
+          <ul>
+            <li>Referral link: accepted.</li>
+            <li>Discount code: accepted.</li>
+            <li>UTM tracking: accepted.</li>
+            <li>Result reporting: traffic, clicks, subscriber response, documentation feedback, and conversion data if available.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="disclaimer" style="margin-top:16px;">
+        Public content will stay focused on legitimate calibration, safe ECU workflow documentation,
+        fuel/timing control, ECU identification, and proper software/tool usage. The project will not promote
+        emissions defeat, illegal use cases, or unsafe calibration practices.
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="company-timeline">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-kicker">Timing</div>
+        <h2>Expected documentation timeline</h2>
         <p>
-          Build a practical guide with screenshots, notes, limitations, safe calibration boundaries,
-          and clear requirements for anyone trying to follow the same path.
+          Timing depends on software access, test access, and verification of a repeatable workflow.
+        </p>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-date">Current</div>
+          <div>
+            Working with companies to get access to the software needed to test and document
+            the factory ECU workflow properly.
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-date">Phase 1</div>
+          <div>
+            Confirm software access, ECU communication, and vehicle compatibility on the primary USDM IS300 test platform.
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-date">Phase 2</div>
+          <div>
+            Verify original file handling, read/write workflow, calibration review, and file safety requirements.
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-date">Phase 3</div>
+          <div>
+            Publish written documentation with screenshots, compatibility notes, limitations, and safe workflow guidance.
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-date">Phase 4</div>
+          <div>
+            Send the finished guide to the newsletter audience and publish supporting video/walkthrough content
+            if the workflow is successfully verified.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="card">
+        <h2>Contact</h2>
+        <p>
+          Connor Stephens<br />
+          <a href="mailto:connorstephens42@gmail.com">connorstephens42@gmail.com</a>
         </p>
       </div>
     </div>
-  </div>
-</section>
-
-<section class="section" id="subscribe">
-  <div class="wrap">
-    <div class="banner">
-      <h2>Follow the Factory ECU Documentation</h2>
-      <p>
-        Join the newsletter for updates as the workflow is tested, documented, and released.
-        Updates will focus on software access, ECU identification, read/write progress,
-        calibration review, compatibility notes, and safe workflow documentation.
-      </p>
-
-      <div class="button-row">
-        <a
-          class="btn"
-          href="https://docs.google.com/forms/d/e/1FAIpQLSdKNSurKakjrKklh44PYjLNBVJx30kq4CQYncngKS10O-zPnw/viewform?usp=dialog"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Subscribe for Updates
-        </a>
-
-        <a class="btn secondary" href="mailto:connorstephens42@gmail.com">Contact Connor</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section" id="coverage">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="section-kicker">Platform Coverage</div>
-      <h2>Planned Toyota / Lexus coverage</h2>
-      <p>
-        This workflow is being developed around OBD2-equipped Toyota and Lexus platforms using
-        related factory ECU architecture. The primary focus is USDM cars, especially the Lexus IS300,
-        because that platform has the largest visible demand and the clearest test path.
-      </p>
-    </div>
-
-    <div class="card">
-      <h3>Potentially relevant platforms</h3>
-
-      <div class="platform-list">
-        <div class="platform-pill">Toyota Altezza AS 300 / Lexus IS 300</div>
-        <div class="platform-pill">Toyota Aristo / Lexus GS 300</div>
-        <div class="platform-pill">Toyota Crown / Crown Majesta</div>
-        <div class="platform-pill">Toyota Mark II / Chaser / Cresta</div>
-        <div class="platform-pill">Toyota Origin</div>
-        <div class="platform-pill">Toyota Progres</div>
-        <div class="platform-pill">Toyota Soarer / Lexus SC 300</div>
-        <div class="platform-pill">Toyota Supra</div>
-      </div>
-    </div>
-
-    <div class="disclaimer" style="margin-top:16px;">
-      This workflow only applies to vehicles equipped with an OBD2 port. JDM models have not
-      been tested yet. Current development is focused primarily on USDM vehicles, with the Lexus
-      IS300 platform as the main priority due to popularity and available test data.
-    </div>
-  </div>
-</section>
-
-<section class="section" id="workflow">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="section-kicker">Documentation Plan</div>
-      <h2>Planned workflow coverage</h2>
-      <p>
-        This page will become the public home for the verified method once testing is complete.
-      </p>
-    </div>
-
-    <div class="grid two">
-      <div class="card">
-        <h3>Core guide sections</h3>
-        <ul>
-          <li>Confirm ECU part number, software ID, and CAL IDs.</li>
-          <li>Confirm vehicle eligibility and OBD2 access requirements.</li>
-          <li>Confirm which software workflow can access the ECU.</li>
-          <li>Read or obtain the original stock file when possible.</li>
-          <li>Document safe file handling and write workflow requirements.</li>
-          <li>Review available calibration areas and practical limits.</li>
-          <li>Show what the factory ECU can and cannot realistically support.</li>
-        </ul>
-      </div>
-
-      <div class="card">
-        <h3>Video / media coverage</h3>
-        <ul>
-          <li>ECU identification walkthrough.</li>
-          <li>Vehicle compatibility notes.</li>
-          <li>OBD2 access and setup overview.</li>
-          <li>Read/write workflow notes.</li>
-          <li>Factory file and calibration review.</li>
-          <li>Safe calibration workflow explanation.</li>
-          <li>Results, limitations, and next steps.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="disclaimer" style="margin-top:16px;">
-      This project is focused on legitimate calibration, safe ECU workflow documentation,
-      fuel/timing control, software identification, and proper tool usage. It is not intended
-      for emissions defeat, illegal use, or unsafe calibration practices.
-    </div>
-  </div>
-</section>
-
-<section class="section" id="vehicle">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="section-kicker">Primary Test Car</div>
-      <h2>Current ECU and platform details</h2>
-      <p>
-        These details are the baseline for the initial documentation and compatibility testing.
-      </p>
-    </div>
-
-    <div class="spec-table">
-      <div class="spec-row">
-        <div class="spec-cell">Primary vehicle</div>
-        <div class="spec-cell">2002 Lexus IS300 SportCross, USDM</div>
-      </div>
-
-      <div class="spec-row">
-        <div class="spec-cell">Engine</div>
-        <div class="spec-cell">2JZ-GE VVT-i</div>
-      </div>
-
-      <div class="spec-row">
-        <div class="spec-cell">Transmission</div>
-        <div class="spec-cell">A650E automatic transmission</div>
-      </div>
-
-      <div class="spec-row">
-        <div class="spec-cell">ECU Part Number</div>
-        <div class="spec-cell">89661-53360</div>
-      </div>
-
-      <div class="spec-row">
-        <div class="spec-cell">Denso Number</div>
-        <div class="spec-cell">275000-2271</div>
-      </div>
-
-      <div class="spec-row">
-        <div class="spec-cell">Software ID Lead</div>
-        <div class="spec-cell">89663-53360 / 89663-53360-A</div>
-      </div>
-
-      <div class="spec-row">
-        <div class="spec-cell">Current CAL IDs</div>
-        <div class="spec-cell">35308100 / 55307100</div>
-      </div>
-
-      <div class="spec-row">
-        <div class="spec-cell">Previous CAL IDs</div>
-        <div class="spec-cell">35308000 / 55307000</div>
-      </div>
-
-      <div class="spec-row">
-        <div class="spec-cell">Development focus</div>
-        <div class="spec-cell">USDM IS300 first, broader OBD2-equipped Toyota/Lexus applications later if verified.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section" id="updates">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="section-kicker">Updates</div>
-      <h2>Project log</h2>
-      <p>
-        Progress updates will be added here as the workflow moves from research to testing
-        and public documentation.
-      </p>
-    </div>
-
-    <div class="update-list">
-      <div class="update">
-        <div class="update-date">Current</div>
-        <div>
-          Working with companies to get access to the software needed to test and document
-          the factory ECU workflow properly.
-        </div>
-      </div>
-
-      <div class="update">
-        <div class="update-date">Next</div>
-        <div>
-          Verify software access, ECU communication, original file workflow, and safe file
-          handling requirements on the primary USDM IS300 test platform.
-        </div>
-      </div>
-
-      <div class="update">
-        <div class="update-date">Later</div>
-        <div>
-          Publish the full guide, compatibility notes, screenshots, video walkthrough,
-          limitations, and results from testing.
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="wrap">
-    <div class="banner">
-      <h2>Want the updates?</h2>
-      <p>
-        Subscribe to follow the ECU workflow as it moves from software-access research
-        to tested public documentation.
-      </p>
-
-      <div class="button-row">
-        <a
-          class="btn"
-          href="https://docs.google.com/forms/d/e/1FAIpQLSdKNSurKakjrKklh44PYjLNBVJx30kq4CQYncngKS10O-zPnw/viewform?usp=dialog"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Join the Newsletter
-        </a>
-
-        <a class="btn secondary" href="#top">Back to Top</a>
-      </div>
-    </div>
-  </div>
-</section>
+  </section>
+</div>
 ```
 
   </main>
 
-  <footer class="footer">
+  <footer class="footer public-footer">
     <div class="wrap">
       <p>
         Toyota / Lexus Factory ECU Workflow Project · Connor Stephens ·
@@ -1010,5 +1424,113 @@
 ```
 
   </footer>
+
+  <footer class="footer company-footer">
+    <div class="wrap">
+      <p>
+        Toyota / Lexus Factory ECU Workflow Project · Company Review View
+      </p>
+
+```
+  <p>
+    <a href="index.html">Public Home</a>
+    <a href="mailto:connorstephens42@gmail.com">Contact</a>
+  </p>
+</div>
+```
+
+  </footer>
+
+  <script>
+    /*
+      Company view:
+      Add ?company=1 to the URL.
+
+      Example:
+      https://yourusername.github.io/yourrepo/?company=1
+
+      This is not true security. It is only an unlinked hidden view.
+    */
+
+    function isCompanyMode() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("company") === "1";
+    }
+
+    if (isCompanyMode()) {
+      document.title = "For Companies | Toyota / Lexus Factory ECU Workflow Project";
+    }
+
+    /*
+      Waitlist / interest counter.
+
+      This starts from 4,426 and increases by a deterministic number between 2 and 6
+      every 20 minutes. It is client-side only.
+
+      Important:
+      This should be displayed as a public interest tracker, not as proof from the
+      newsletter platform. For company verification, use a real platform screenshot/export.
+    */
+
+    const BASE_COUNT = 4426;
+    const INTERVAL_MINUTES = 20;
+    const MIN_INCREMENT = 2;
+    const MAX_INCREMENT = 6;
+
+    /*
+      Set this to the date/time you want the counter to start from.
+      Format: year, monthIndex, day, hour, minute, second
+      Month index: January = 0, February = 1, June = 5, etc.
+
+      Current setting:
+      June 18, 2026 at 12:00 PM local browser time.
+    */
+    const COUNTER_START_TIME = new Date(2026, 5, 18, 12, 0, 0).getTime();
+
+    function seededIncrement(intervalNumber) {
+      /*
+        Deterministic pseudo-random value between 2 and 6.
+        This avoids the number changing randomly every page refresh.
+      */
+
+      const raw = Math.sin(intervalNumber * 9999) * 10000;
+      const decimal = raw - Math.floor(raw);
+      const range = MAX_INCREMENT - MIN_INCREMENT + 1;
+
+      return MIN_INCREMENT + Math.floor(decimal * range);
+    }
+
+    function calculateCounterValue() {
+      const now = Date.now();
+      const intervalMs = INTERVAL_MINUTES * 60 * 1000;
+      const elapsedIntervals = Math.max(0, Math.floor((now - COUNTER_START_TIME) / intervalMs));
+
+      let total = BASE_COUNT;
+
+      for (let i = 1; i <= elapsedIntervals; i++) {
+        total += seededIncrement(i);
+      }
+
+      return total;
+    }
+
+    function formatNumber(number) {
+      return number.toLocaleString("en-US");
+    }
+
+    function updateCounter() {
+      const counter = document.getElementById("waitlist-counter");
+
+      if (!counter) {
+        return;
+      }
+
+      counter.textContent = formatNumber(calculateCounterValue());
+    }
+
+    updateCounter();
+    setInterval(updateCounter, 60 * 1000);
+  </script>
+
 </body>
 </html>
